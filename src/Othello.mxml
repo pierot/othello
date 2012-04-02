@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:WindowedApplication xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" initialize="init()" xmlns:othello="be.wellconsidered.othello.*" width="640" height="390" borderColor="#767676">
+	
+	<mx:Script>
+		<![CDATA[
+		
+			import be.wellconsidered.othello.model.PlayerColours;
+			import be.wellconsidered.othello.events.OthelloEvent;
+		
+			import mx.controls.Alert;
+			import be.wellconsidered.logging.Logger;
+			
+			private function init():void
+			{
+				Logger.isVerbose = true;
+				
+				othello.addEventListener(OthelloEvent.PLAYER_SWITCH, onPlayerSwitch, false, 0, true);
+				othello.addEventListener(OthelloEvent.END_GAME, onEndGame, false, 0, true);
+			}
+			
+			private function onEndGame(e:OthelloEvent):void
+			{
+				btnStart.enabled = true;
+				txtGraad.enabled = true;
+				
+				lblScoreWit.text = String(othello.getScore(PlayerColours.PLAYER2));
+				lblScoreZwart.text = String(othello.getScore(PlayerColours.PLAYER1));
+			}
+			
+			private function onPlayerSwitch(e:OthelloEvent):void
+			{
+				if(e.data == PlayerColours.PLAYER1)
+					cCurrent.setStyle( "backgroundColor", 0x000000);
+				else
+					cCurrent.setStyle( "backgroundColor", 0xffffff);
+			}
+			
+			private function onStartGame():void
+			{
+				othello.defaultDepth = int(txtGraad.text);
+				othello.startNewGame();
+				
+				btnStart.enabled = false;
+				txtGraad.enabled = false;
+				
+				lblScoreWit.text = "-";
+				lblScoreZwart.text = "-";
+			}
+			
+		]]>
+	</mx:Script>
+	
+	<othello:Othello width="300" height="300" x="10" y="62" grid_size="8" id="othello" />
+	
+	<mx:TextInput x="364" y="62" id="txtGraad" text="3" width="59"/>
+	<mx:Label x="318" y="64" text="Graad:"/>
+	
+	<mx:Button x="318" y="92" label="Start Spel" id="btnStart" click="onStartGame()" />
+	<mx:Label x="19" y="10" text="Othello - Michels &amp; Co" fontSize="18" fontWeight="bold"/>
+	
+	<mx:Label x="318" y="344" text="Wie is aan beurt?"/>
+	<mx:Canvas x="429" y="344" width="18" height="18" id="cCurrent" backgroundColor="#000000"></mx:Canvas>
+	<mx:Label x="318" y="182" text="Eindscore Wit"/>
+	<mx:Label x="318" y="208" text="Eindscore Zwart"/>
+	<mx:Label x="416" y="182" id="lblScoreWit" text="-"/>
+	<mx:Label x="416" y="208" text="-" id="lblScoreZwart"/>
+	
+</mx:WindowedApplication>
